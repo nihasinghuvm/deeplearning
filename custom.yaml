@@ -1,0 +1,33 @@
+module: SequenceModule
+model:
+  model_name: CustomModel
+  arch_name: Hybrid
+  arch:
+    input_len: 170  # Length of input sequences
+    output_dim: 1   # Single output dimension for regression
+    conv_kwargs:
+      input_channels: 4  # Number of input channels
+      conv_channels: [512, 512, 256]  # Increased number of filters for each conv layer
+      conv_kernels: [15, 11, 7]  # Adjusted kernel sizes for more flexibility
+      conv_strides: [1, 2, 2]  # Changed strides to downsample more aggressively
+      pool_kernels: [3, 3, 3]  # Pooling kernel sizes
+      pool_strides: [2, 2, 2]  # Pooling strides
+      dropout_rates: 0.4  # Increased dropout rate for regularization
+      batchnorm: True  # Enable batch normalization after conv layers
+      activations: relu  # Activation function to use
+    recurrent_kwargs:
+      hidden_dim: 256  # Increased hidden dimension for the recurrent layer
+      num_layers: 2  # Stacking two recurrent layers for deeper learning
+      batch_first: True  # Input tensor format: (batch, seq, feature)
+    dense_kwargs:
+      hidden_dims: [128, 64]  # Increased dimensions for dense layers with an additional layer
+      dropout_rates: 0.4  # Increased dropout rate for dense layers
+      batchnorm: True  # Enable batch normalization after dense layers
+  task: regression  # Task type
+  loss_fxn: mse  # Mean squared error loss
+  optimizer: adam  # Adam optimizer
+  optimizer_lr: 0.001  # Learning rate for the optimizer
+  scheduler: reduce_lr_on_plateau  # Learning rate scheduler
+  scheduler_monitor: val_loss_epoch  # Metric to monitor for the scheduler
+  scheduler_kwargs:
+    patience: 2  # Number of epochs with no improvement after which learning rate will be reduced
